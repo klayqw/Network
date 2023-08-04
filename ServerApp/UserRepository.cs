@@ -4,11 +4,11 @@ using System.Data;
 using Dapper;
 using System.Formats.Asn1;
 
-internal class Sql
+public class UserRepository
 {
     private readonly IDbConnection connection;
 
-    public Sql(string connectionString)
+    public UserRepository(string connectionString)
     {
         this.connection = new SqlConnection(connectionString);
     }
@@ -22,7 +22,6 @@ internal class Sql
 
     public async Task<User> FindAsync(int id)
     {
-        
             var user = await this.connection.QueryFirstAsync<User>(
                 sql: $@"select * from Users u
                     where u.Id = @id",

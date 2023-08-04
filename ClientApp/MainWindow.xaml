@@ -1,0 +1,63 @@
+﻿<Window x:Class="ClientApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ClientApp"
+        mc:Ignorable="d"
+        Title="User App" Height="450" Width="800">
+    
+    <Grid>
+
+        <StackPanel
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+
+            <StackPanel
+                Margin="20"
+                Orientation="Horizontal">
+                <Label
+                    Content="Login: "
+                    FontSize="30"/>
+                <TextBox 
+                    x:Name="LoginTextBox"
+                    Width="400"
+                    FontSize="30"/>
+            </StackPanel>
+
+            <StackPanel
+                Margin="20"
+                Orientation="Horizontal">
+                <Label
+                    Content="Password: "
+                    FontSize="30"/>
+                <TextBox 
+                    x:Name="PasswordTextBox"
+                    Width="400"
+                    FontSize="30"/>
+            </StackPanel>
+
+            <StackPanel
+                Margin="20"
+                Orientation="Horizontal">
+                <Label
+                    Content="Email: "
+                    FontSize="30"/>
+                <TextBox 
+                    x:Name="EmailTextBox"
+                    Width="400"
+                    FontSize="30"/>
+            </StackPanel>
+
+            <Button
+                Width="400"
+                Content="Enter"
+                Height="50"
+                Margin="0 30 0 0"
+                Click="EnterButtonClick"/>
+
+        </StackPanel>
+        
+    </Grid>
+    
+</Window>

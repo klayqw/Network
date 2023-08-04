@@ -10,18 +10,16 @@ httpListener.Prefixes.Add($"http://*:{port}/");
 
 httpListener.Start();
 
-const string connectionString = "Data Source=.;Initial Catalog=Network;Integrated Security=True";
-var usersRepository = new Sql(connectionString);
+const string connectionString = $"Server=localhost;Database=UserDB;User Id=sa;Password=admin;TrustServerCertificate=True;";
+var usersRepository = new UserRepository(connectionString);
 
 while (true)
 {
     HttpListenerContext context = await httpListener.GetContextAsync();
 
-    //ThreadPool.QueueUserWorkItem(async (state) => {
     string requestPath = context.Request.Url?.AbsolutePath!;
 
-    var requestPathItems = requestPath.Split('/', StringSplitOptions.RemoveEmptyEntries)
-        .Take(2);
+    var requestPathItems = requestPath.Split('/', StringSplitOptions.RemoveEmptyEntries).Take(2);
 
     string responseJson = string.Empty;
     try
