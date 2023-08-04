@@ -10,7 +10,7 @@ httpListener.Prefixes.Add($"http://*:{port}/");
 
 httpListener.Start();
 
-const string connectionString = $"Server=localhost;Database=UserDB;User Id=sa;Password=admin;TrustServerCertificate=True;";
+const string connectionString = $"Server=localhost;Database=Network;TrustServerCertificate=True;Trusted_Connection=True;";
 var usersRepository = new UserRepository(connectionString);
 
 while (true)
@@ -150,6 +150,30 @@ while (true)
                             await usersRepository.UpdateAsync(id,user);
                             context.Response.StatusCode = 201;
                             responseJson = $"User '{user.login} {user.password}' updated successfully!";
+                            context.Response.ContentType = "plain/text";
+
+                        }
+                        else
+                        {
+                            responseJson = "Error: Invalid method type!";
+                            context.Response.ContentType = "plain/text";
+                            context.Response.StatusCode = 400;
+                        }
+                        break;
+                    case "login":
+                        if (context.Request.HttpMethod.ToLower() == "get")
+                        {
+                            using var reader = new StreamReader(context.Request.InputStream);
+                            var requestJson = await reader.ReadToEndAsync();
+                            var user = JsonSerializer.Deserialize<User>(requestJson);
+
+                            if (user == null)
+                            {
+                                context.Response.StatusCode = 400;
+                                break;
+                            }
+                            responseJson = JsonSerializer.Serialize(await usersRepository.LoginAsync(user));
+                            context.Response.StatusCode = 201;
                             context.Response.ContentType = "plain/text";
 
                         }

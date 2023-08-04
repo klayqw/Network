@@ -53,4 +53,14 @@ public class UserRepository
                     where Id = @id",
            param: new { id,user.login,user.password,user.email });
     }
+
+    public async Task<User> LoginAsync(User user)
+    {
+        var findeduser = await this.connection.QueryFirstAsync<User>(
+           sql: @"select *
+                    from Users
+                    where [Login] = @login and Password = @password and Email = @email",
+           param: new {user.login, user.password, user.email });
+        return findeduser;
+    }
 }
