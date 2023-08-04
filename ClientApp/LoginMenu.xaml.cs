@@ -9,14 +9,14 @@ using System.IO;
 using System;
 
 namespace ClientApp;
-public partial class MainWindow : Window
+public partial class LoginMenu : Window
 {
-    public MainWindow()
+    public LoginMenu()
     {
         InitializeComponent();
     }
 
-    private void EnterButtonClick(object sender, RoutedEventArgs e)
+    private void LoginButtonClick(object sender, RoutedEventArgs e)
     {
         Task.Run(async () =>
         {
@@ -26,17 +26,18 @@ public partial class MainWindow : Window
             {
                 login = LoginTextBox.Text,
                 password = PasswordTextBox.Text,
-                email = EmailTextBox.Text,
             };
 
             HttpContent jsonContent = JsonContent.Create(newUser);
-            HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/create", jsonContent);
+            HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/login", jsonContent);
 
             using var reader = new StreamReader(response.Content.ReadAsStream());
             var responseTxt = await reader.ReadToEndAsync();
 
             Console.WriteLine(response.StatusCode);
             Console.WriteLine(responseTxt);
+
+
         });
     }
 }
