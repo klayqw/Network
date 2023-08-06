@@ -44,6 +44,12 @@
                 Margin="0 30 0 0"
                 Click="LoginButtonClick"/>
 
+            <Button 
+                Content="Click if you still have not an account"
+                Margin="30"
+                Height="40"
+                Click="GoToRegisterClick"/>
+
         </StackPanel>
         
     </Grid>

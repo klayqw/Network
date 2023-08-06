@@ -60,7 +60,7 @@ public class UserRepository
            sql: @"select *
                     from Users
                     where [Login] = @login and Password = @password and Email = @email",
-           param: new {user.login, user.password, user.email });
+           param: new { user.login, user.password, user.email });
         return findeduser;
     }
 }

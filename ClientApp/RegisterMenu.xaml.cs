@@ -1,9 +1,12 @@
 ﻿using Models;
+using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Interop;
+
 namespace ClientApp;
 public partial class RegisterMenu : Window
 {
@@ -12,39 +15,44 @@ public partial class RegisterMenu : Window
         InitializeComponent();
     }
 
-    private void RegisterButtonClick(object sender, RoutedEventArgs e)
+    private async void RegisterButtonClick(object sender, RoutedEventArgs e)
     {
-        Task.Run(async () =>
+        if(string.IsNullOrWhiteSpace(LoginTextBox.Text) ||
+            string.IsNullOrWhiteSpace(EmailTextBox.Text) ||
+            string.IsNullOrWhiteSpace(PasswordTextBox.Text))
         {
-            HttpClient httpClient = new HttpClient();
+            MessageBox.Show("Fields can not be empty");
+            return;
+        }
 
-            User newUser = new User()
-            {
-                login = LoginTextBox.Text,
-                password = PasswordTextBox.Text,
-                email = EmailTextBox.Text
-            };
+        HttpClient httpClient = new HttpClient();
 
-            HttpContent jsonContent = JsonContent.Create(newUser);
-            HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/create", jsonContent);
+        User newUser = new User()
+        {
+            login = LoginTextBox.Text,
+            password = PasswordTextBox.Text,
+            email = EmailTextBox.Text
+        };
 
-            using var reader = new StreamReader(response.Content.ReadAsStream());
-            var responseTxt = await reader.ReadToEndAsync();
+        HttpContent jsonContent = JsonContent.Create(newUser);
+        HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/create", jsonContent);
 
-            System.Console.WriteLine(response.StatusCode);
-            System.Console.WriteLine(responseTxt);
+        using var reader = new StreamReader(response.Content.ReadAsStream());
+        var responseTxt = await reader.ReadToEndAsync();
 
-            if (string.IsNullOrWhiteSpace(LoginTextBox.Text) ||
-                string.IsNullOrWhiteSpace(EmailTextBox.Text) ||
-                string.IsNullOrWhiteSpace(PasswordTextBox.Text))
-            {
-                MessageBox.Show("field can not be empty");
-            }
-            else
-            {
-                new MainMenu().Show();
-                this.Close();
-            }
-        });
+        System.Console.WriteLine(response.StatusCode);
+        System.Console.WriteLine(responseTxt);
+
+        if(response.StatusCode == System.Net.HttpStatusCode.Accepted)
+            MessageBox.Show("User Created Successfully");
+
+        if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            MessageBox.Show(responseTxt);
+            return;
+        }
+
+        new MainMenu(newUser).Show();
+        this.Close();
     }
 }

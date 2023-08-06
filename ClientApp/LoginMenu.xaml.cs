@@ -16,28 +16,46 @@ public partial class LoginMenu : Window
         InitializeComponent();
     }
 
-    private void LoginButtonClick(object sender, RoutedEventArgs e)
+    private async void LoginButtonClick(object sender, RoutedEventArgs e)
     {
-        Task.Run(async () =>
+        if(string.IsNullOrWhiteSpace(LoginTextBox.Text) || string.IsNullOrWhiteSpace(PasswordTextBox.Text))
         {
-            HttpClient httpClient = new HttpClient();
+            MessageBox.Show("Fields can not be empty");
+            return;
+        }
 
-            User newUser = new User()
-            {
-                login = LoginTextBox.Text,
-                password = PasswordTextBox.Text,
-            };
+        HttpClient httpClient = new HttpClient();
 
-            HttpContent jsonContent = JsonContent.Create(newUser);
-            HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/login", jsonContent);
+        User newUser = new User()
+        {
+            login = LoginTextBox.Text,
+            password = PasswordTextBox.Text,
+        };
 
-            using var reader = new StreamReader(response.Content.ReadAsStream());
-            var responseTxt = await reader.ReadToEndAsync();
+        HttpContent jsonContent = JsonContent.Create(newUser);
+        HttpResponseMessage response = await httpClient.PostAsync("http://localhost/users/login", jsonContent);
 
-            Console.WriteLine(response.StatusCode);
-            Console.WriteLine(responseTxt);
+        using var reader = new StreamReader(response.Content.ReadAsStream());
+        var responseTxt = await reader.ReadToEndAsync();
 
+        Console.WriteLine(responseTxt);
 
-        });
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+            MessageBox.Show(responseTxt);
+
+        else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            MessageBox.Show(responseTxt);
+            return;
+        }
+
+        new MainMenu(newUser).Show();
+        this.Close();
+    }
+
+    private void GoToRegisterClick(object sender, RoutedEventArgs e)
+    {
+        new RegisterMenu().Show();
+        this.Close();
     }
 }
