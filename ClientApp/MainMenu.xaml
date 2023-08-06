@@ -14,7 +14,6 @@
             <Button Click="ShowUsersClick" Height="100" Width="100" Content="Show All Users"/>
             <Button Click="AccountClick" Height="100" Width="100" Content="Account"/>
             <Button Click="DeleteAccountClick" Height="100" Width="100" Content="Delete Account"/>
-            <Button Click="SearchClick" Height="100" Width="100" Content="Search By ID"/>
 
         </StackPanel>
 
