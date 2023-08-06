@@ -161,21 +161,29 @@ while (true)
                         }
                         break;
                     case "login":
-                        if (context.Request.HttpMethod.ToLower() == "get")
+                        if (context.Request.HttpMethod.ToLower() == "post")
                         {
-                            using var reader = new StreamReader(context.Request.InputStream);
-                            var requestJson = await reader.ReadToEndAsync();
-                            var user = JsonSerializer.Deserialize<User>(requestJson);
-
-                            if (user == null)
+                            try
                             {
-                                context.Response.StatusCode = 400;
-                                break;
-                            }
-                            responseJson = JsonSerializer.Serialize(await usersRepository.LoginAsync(user));
-                            context.Response.StatusCode = 201;
-                            context.Response.ContentType = "plain/text";
+                                using var reader = new StreamReader(context.Request.InputStream);
+                                var requestJson = await reader.ReadToEndAsync();
+                                var user = JsonSerializer.Deserialize<User>(requestJson);
 
+                                if (user == null)
+                                {
+                                    context.Response.StatusCode = 400;
+                                    break;
+                                }
+                                responseJson = JsonSerializer.Serialize(await usersRepository.LoginAsync(user));
+                                context.Response.StatusCode = 302;
+                                context.Response.ContentType = "plain/text";
+                            }
+                            catch
+                            {
+                                responseJson = "Error: not founded";
+                                context.Response.ContentType = "plain/text";
+                                context.Response.StatusCode = 404;
+                            }
                         }
                         else
                         {

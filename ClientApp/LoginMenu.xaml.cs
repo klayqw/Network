@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Shapes;
 using System.IO;
 using System;
+using System.Text.Json;
 
 namespace ClientApp;
 public partial class LoginMenu : Window
@@ -39,11 +40,13 @@ public partial class LoginMenu : Window
         var responseTxt = await reader.ReadToEndAsync();
 
         Console.WriteLine(responseTxt);
+        if(response.StatusCode == System.Net.HttpStatusCode.Found)
+        {
+            newUser = JsonSerializer.Deserialize<User>(responseTxt); 
+        }
 
-        if(response.StatusCode == System.Net.HttpStatusCode.OK)
-            MessageBox.Show(responseTxt);
 
-        else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        else if(response.StatusCode == System.Net.HttpStatusCode.BadRequest || response.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             MessageBox.Show(responseTxt);
             return;

@@ -20,13 +20,14 @@ public partial class MainMenu : Window
     public MainMenu(User user)
     {
         InitializeComponent();
-
         nowUser = user;
+        Console.WriteLine(nowUser.email);
     }
     private void SetAllVisibility()
     {
         UsersListView.Visibility = Visibility.Hidden;
         AccountGrid.Visibility = Visibility.Hidden;
+        DeleteGrid.Visibility = Visibility.Hidden;
     }
     private async void ShowUsersClick(object sender, RoutedEventArgs e)
     {
@@ -76,12 +77,22 @@ public partial class MainMenu : Window
             login = LoginTextBox.Text,
             password = PasswordTextBox.Text
         };
+        HttpContent jsonContent = JsonContent.Create(user);
+        HttpResponseMessage response = await httpClient.PutAsync($"http://localhost/users/update?id={nowUser.Id}", jsonContent);
+        response = await httpClient.GetAsync($"http://localhost/users/get?id={nowUser.Id}");
+        using var reader = new StreamReader(response.Content.ReadAsStream());
+        var responseTxt = await reader.ReadToEndAsync();
+        nowUser = JsonSerializer.Deserialize<User>(responseTxt);
     }
 
     private async void DeleteClick(object sender, RoutedEventArgs e)
     {
         HttpClient httpClient = new HttpClient();
-        
-        HttpResponseMessage response = await httpClient.DeleteAsync($"http://localhost/users/delete/{IdTextBox.Text}");
+        if(int.Parse(IdTextBox.Text) == nowUser.Id)
+        {
+           MessageBox.Show("cant delete user that login in");
+            return;
+        }
+        HttpResponseMessage response = await httpClient.DeleteAsync($"http://localhost/users/delete?id={IdTextBox.Text}");
     }
 }

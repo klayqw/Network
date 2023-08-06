@@ -56,10 +56,12 @@ public class UserRepository
 
     public async Task<User> LoginAsync(User user)
     {
+        Console.WriteLine(user.login);
+        await Console.Out.WriteLineAsync(user.password);
         var findeduser = await this.connection.QueryFirstAsync<User>(
            sql: @"select *
-                    from Users
-                    where [Login] = @login and Password = @password and Email = @email",
+                 from Users
+                 where [Login] = @login and Password = @password",
            param: new { user.login, user.password, user.email });
         return findeduser;
     }
